@@ -1,0 +1,125 @@
+{
+  "name": "pluvianidae",
+  "displayName": "Pluvianidae",
+  "description": "Asistente inteligente de desarrollo para repositorios JavaScript/TypeScript",
+  "version": "0.1.0",
+  "publisher": "pluvianidae",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Pluvianidae",
+      "properties": {
+        "pluvianidae.excludePatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Patrones adicionales de archivos/carpetas a excluir del índice del repositorio."
+        },
+        "pluvianidae.bedrockRegion": {
+          "type": "string",
+          "default": "us-east-1",
+          "description": "Región de AWS utilizada para las llamadas a Amazon Bedrock."
+        },
+        "pluvianidae.bedrockModelId": {
+          "type": "string",
+          "default": "anthropic.claude-3-sonnet-20240229-v1:0",
+          "description": "Identificador del modelo de Amazon Bedrock utilizado para búsqueda semántica, generación de README y explicación de repositorio."
+        },
+        "pluvianidae.enableMascot": {
+          "type": "boolean",
+          "default": true,
+          "description": "Muestra la mascota animada de Pluvianidae."
+        },
+        "pluvianidae.confirmBeforeTransmit": {
+          "type": "boolean",
+          "default": true,
+          "description": "Solicita confirmación antes de enviar archivos o fragmentos de código a Amazon Bedrock."
+        },
+        "pluvianidae.persistIndex": {
+          "type": "boolean",
+          "default": false,
+          "description": "Persiste el índice del repositorio entre sesiones (requiere consentimiento explícito del usuario)."
+        },
+        "pluvianidae.maxIndexingTime": {
+          "type": "number",
+          "default": 5000,
+          "description": "Tiempo máximo (en milisegundos) permitido para la indexación de un archivo individual."
+        },
+        "pluvianidae.maxPreCommitTime": {
+          "type": "number",
+          "default": 60000,
+          "description": "Tiempo máximo (en milisegundos) permitido para completar la revisión pre-commit."
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "pluvianidae.seedBasket",
+          "name": "Pluvianidae: Cesto de semillas"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "pluvianidae.search",
+        "title": "Pluvianidae: Buscar en el repositorio"
+      },
+      {
+        "command": "pluvianidae.analyzeReferences",
+        "title": "Pluvianidae: Analizar referencias"
+      },
+      {
+        "command": "pluvianidae.detectDeadCode",
+        "title": "Pluvianidae: Detectar código no utilizado"
+      },
+      {
+        "command": "pluvianidae.compareFrontendBackend",
+        "title": "Pluvianidae: Comparar frontend-backend"
+      },
+      {
+        "command": "pluvianidae.preCommitReview",
+        "title": "Pluvianidae: Revisión pre-commit"
+      },
+      {
+        "command": "pluvianidae.generateReadme",
+        "title": "Pluvianidae: Generar README"
+      },
+      {
+        "command": "pluvianidae.explainRepository",
+        "title": "Pluvianidae: Explicar repositorio"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1094.0",
+    "diff": "5.2.0",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/diff": "5.2.3",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "fast-check": "^3.15.0",
+    "vitest": "^1.2.0"
+  }
+}
