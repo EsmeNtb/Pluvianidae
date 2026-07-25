@@ -84,8 +84,16 @@ const AWS_ACCESS_KEY_REGEX = /\bAKIA[0-9A-Z]{16}\b/;
 /** PEM-style private key block headers (RSA, EC, DSA, OpenSSH, encrypted, generic). */
 const PRIVATE_KEY_HEADER_REGEX = /-----BEGIN (?:RSA |EC |DSA |OPENSSH |ENCRYPTED )?PRIVATE KEY-----/;
 
-/** JWT-like tokens: three base64url segments separated by dots. */
-const JWT_REGEX = /\beyJ[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}\b/;
+/**
+ * JWT-like tokens: three base64url segments separated by dots. Uses
+ * negative lookaround assertions instead of `\b` word-boundary anchors —
+ * `-`/`_` are valid base64url characters but not `\w`, so a `\b` anchor
+ * fails to match when a segment starts or ends with either (see
+ * `security-filter.ts`'s `JWT_REGEX`, which was fixed for the identical
+ * reason after a property test found a JWT ending in `-` was silently not
+ * detected).
+ */
+const JWT_REGEX = /(?<![A-Za-z0-9_-])eyJ[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}(?![A-Za-z0-9_-])/;
 
 /**
  * Generic `key = value` / `key: value` credential assignments, e.g.

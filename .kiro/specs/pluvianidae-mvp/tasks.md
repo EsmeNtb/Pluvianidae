@@ -27,7 +27,7 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Define `SymbolType`, `HttpMethod`, `ParameterInfo`, `TypeSchema` types
     - _Requirements: 1.2, 9.1, 9.2_
 
-  - [ ]* 1.4 Write property test for Event Bus ordering
+  - [x]* 1.4 Write property test for Event Bus ordering
     - **Property 22: Animation queue ordering**
     - **Validates: Requirements 10.7**
 
@@ -62,23 +62,23 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Enforce 5-second timeout per file for incremental updates
     - _Requirements: 1.7_
 
-  - [ ]* 2.5 Write property tests for Indexador
+  - [x]* 2.5 Write property tests for Indexador
     - **Property 1: File extension and exclusion filtering**
     - **Validates: Requirements 1.1**
 
-  - [ ]* 2.6 Write property test for symbol extraction
+  - [x]* 2.6 Write property test for symbol extraction
     - **Property 2: Symbol extraction completeness**
     - **Validates: Requirements 1.2**
 
-  - [ ]* 2.7 Write property test for gitignore exclusion
+  - [x]* 2.7 Write property test for gitignore exclusion
     - **Property 3: Gitignore pattern exclusion**
     - **Validates: Requirements 1.3**
 
-  - [ ]* 2.8 Write property test for error resilience
+  - [x]* 2.8 Write property test for error resilience
     - **Property 5: Error resilience across modules**
     - **Validates: Requirements 1.6, 4.5, 5.7**
 
-  - [ ]* 2.9 Write property test for incremental index consistency
+  - [x]* 2.9 Write property test for incremental index consistency
     - **Property 6: Incremental index consistency**
     - **Validates: Requirements 1.7**
 
@@ -90,11 +90,11 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Implement value redaction for tokens, passwords, API keys, connection strings
     - _Requirements: 1.4, 11.1, 11.2, 11.5_
 
-  - [ ]* 3.2 Write property tests for Security Filter
+  - [x]* 3.2 Write property tests for Security Filter
     - **Property 4: Sensitive file exclusion**
     - **Validates: Requirements 1.4, 11.1, 11.2**
 
-  - [ ]* 3.3 Write property test for value redaction
+  - [x]* 3.3 Write property test for value redaction
     - **Property 23: Sensitive value redaction**
     - **Validates: Requirements 11.5**
 
@@ -118,11 +118,11 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Fallback to `searchExact` when Bedrock unavailable
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
-  - [ ]* 5.3 Write property tests for Buscador
+  - [x]* 5.3 Write property tests for Buscador
     - **Property 7: Search result completeness**
     - **Validates: Requirements 2.2**
 
-  - [ ]* 5.4 Write property test for related files
+  - [x]* 5.4 Write property test for related files
     - **Property 8: Related files from import graph**
     - **Validates: Requirements 2.3**
 
@@ -134,7 +134,7 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Handle symbol-not-found case: inform user with possible causes (file not indexed, external dependency)
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-  - [ ]* 6.2 Write property test for Reference Analyzer
+  - [x]* 6.2 Write property test for Reference Analyzer
     - **Property 9: Reference map completeness**
     - **Validates: Requirements 3.1, 3.2, 3.3, 3.4, 3.5**
 
@@ -159,11 +159,11 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Require explicit confirmation for each fix
     - _Requirements: 4.4, 11.6_
 
-  - [ ]* 7.4 Write property tests for Dead Code Detector
+  - [x]* 7.4 Write property tests for Dead Code Detector
     - **Property 10: Dead code detection accuracy**
     - **Validates: Requirements 4.1, 4.2**
 
-  - [ ]* 7.5 Write property test for commented/duplicate thresholds
+  - [x]* 7.5 Write property test for commented/duplicate thresholds
     - **Property 11: Commented and duplicate code thresholds**
     - **Validates: Requirements 4.3**
 
@@ -187,19 +187,19 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Handle unanalyzable files gracefully
     - _Requirements: 5.3, 5.4, 5.5, 5.6, 5.7_
 
-  - [ ]* 8.4 Write property tests for endpoint extraction
+  - [x]* 8.4 Write property tests for endpoint extraction
     - **Property 12: Backend endpoint extraction**
     - **Validates: Requirements 5.1**
 
-  - [ ]* 8.5 Write property test for frontend call extraction
+  - [x]* 8.5 Write property test for frontend call extraction
     - **Property 13: Frontend API call extraction**
     - **Validates: Requirements 5.2**
 
-  - [ ]* 8.6 Write property tests for mismatch detection
+  - [x]* 8.6 Write property tests for mismatch detection
     - **Property 14: Connection mismatch detection**
     - **Validates: Requirements 5.3, 5.4**
 
-  - [ ]* 8.7 Write property test for type incompatibility
+  - [x]* 8.7 Write property test for type incompatibility
     - **Property 15: Type and method incompatibility detection**
     - **Validates: Requirements 5.5, 5.6**
 
@@ -223,11 +223,11 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Never include detected values in logs or reports
     - _Requirements: 6.3_
 
-  - [ ]* 10.3 Write property test for finding classification
+  - [x]* 10.3 Write property test for finding classification
     - **Property 16: Pre-commit finding classification**
     - **Validates: Requirements 6.2**
 
-  - [ ]* 10.4 Write property test for secret detection
+  - [x]* 10.4 Write property test for secret detection
     - **Property 17: Secret pattern detection**
     - **Validates: Requirements 6.3**
 
@@ -248,11 +248,11 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Include diff in confirmation dialog
     - _Requirements: 7.4_
 
-  - [ ]* 11.3 Write property test for README diff
+  - [x]* 11.3 Write property test for README diff
     - **Property 24: README diff generation**
     - **Validates: Requirements 7.4**
 
-  - [ ]* 11.4 Write property test for section omission
+  - [x]* 11.4 Write property test for section omission
     - **Property 25: README section omission for missing data**
     - **Validates: Requirements 7.5**
 
@@ -287,19 +287,19 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Show full detail when user selects a seed (description, location, suggested action)
     - _Requirements: 9.5, 9.7_
 
-  - [ ]* 13.4 Write property test for seed state machine
+  - [x]* 13.4 Write property test for seed state machine
     - **Property 18: Seed state machine validity**
     - **Validates: Requirements 9.2, 9.4**
 
-  - [ ]* 13.5 Write property test for seed creation
+  - [x]* 13.5 Write property test for seed creation
     - **Property 19: Seed creation completeness**
     - **Validates: Requirements 9.1**
 
-  - [ ]* 13.6 Write property test for pending count
+  - [x]* 13.6 Write property test for pending count
     - **Property 20: Pending seed count consistency**
     - **Validates: Requirements 9.5**
 
-- [ ] 14. Implement Mascota (Mascot) module
+- [x] 14. Implement Mascota (Mascot) module
   - [x] 14.1 Implement Mascot Controller (`src/presentation/mascot/mascot-controller.ts`)
     - Implement `IMascotController` with `show`, `hide`, `animate`, `positionNear`
     - Position mascot in corner without overlapping editable content or interactive controls
@@ -312,22 +312,22 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Process animation queue in arrival order without omitting events
     - _Requirements: 10.2, 10.3, 10.4, 10.5, 10.7_
 
-  - [ ] 14.3 Implement Mascot Webview (`src/presentation/mascot/mascot-webview.ts`)
+  - [x] 14.3 Implement Mascot Webview (`src/presentation/mascot/mascot-webview.ts`)
     - Create VS Code Webview panel for mascot rendering
     - Render animated mascot (bird) with CSS/SVG animations
     - Wire Event Bus events to mascot animations (seed created → carrying-seed, analysis complete → celebration, etc.)
     - Show carrying-seed visual when pending seeds exist
     - _Requirements: 9.6, 10.2, 10.3, 10.5_
 
-  - [ ]* 14.4 Write property test for carrying-seed indicator
+  - [x]* 14.4 Write property test for carrying-seed indicator
     - **Property 21: Mascot carrying-seed indicator**
     - **Validates: Requirements 9.6**
 
-- [ ] 15. Checkpoint - All modules implemented
+- [x] 15. Checkpoint - All modules implemented
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 16. Wire extension entry point and integrate all modules
-  - [ ] 16.1 Implement extension activation (`src/extension.ts`)
+- [x] 16. Wire extension entry point and integrate all modules
+  - [x] 16.1 Implement extension activation (`src/extension.ts`)
     - Register all VS Code commands (search, analyze references, detect dead code, compare frontend-backend, pre-commit review, generate README, explain repository)
     - Initialize Event Bus and inject into all modules
     - Trigger indexation on workspace open
@@ -336,27 +336,27 @@ Implementation of the Pluvianidae VS Code extension — an intelligent developme
     - Wire analysis findings → seed creation → mascot animations via Event Bus
     - _Requirements: 1.1, 1.5, 1.7_
 
-  - [ ] 16.2 Implement user-facing confirmation dialogs (`src/services/confirmation-service.ts`)
+  - [x] 16.2 Implement user-facing confirmation dialogs (`src/services/confirmation-service.ts`)
     - Bedrock transmission confirmation (show files/snippets being sent)
     - File modification confirmation (show proposed changes)
     - Commit blocking dialog for secrets
     - Centralize all user confirmation flows
     - _Requirements: 11.3, 11.4, 11.6_
 
-  - [ ] 16.3 Implement VS Code UI integration
+  - [x] 16.3 Implement VS Code UI integration
     - Register TreeView providers for seed basket
     - Register status bar items for indexing progress
     - Register diagnostic decorations for findings
     - Configure extension settings schema in `package.json`
     - _Requirements: 1.5, 9.5, 10.1_
 
-  - [ ]* 16.4 Write integration tests for full workflow
+  - [x]* 16.4 Write integration tests for full workflow
     - Test indexation → search → results flow
     - Test finding generation → seed creation → mascot animation flow
     - Test pre-commit with mock git staging area
     - _Requirements: All (end-to-end validation)_
 
-- [ ] 17. Final checkpoint - Full integration verified
+- [x] 17. Final checkpoint - Full integration verified
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

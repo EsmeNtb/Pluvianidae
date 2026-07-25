@@ -234,16 +234,25 @@ export class FrontendBackendComparator implements IFrontendBackendComparator {
         }
       });
 
-      const methodMatched = routeMatchedCalls.filter(({ call }) => call.method === endpoint.method);
+      if (routeMatchedCalls.length === 0) {
+        unconsumedEndpoints.push({
+          route: endpoint.route,
+          method: endpoint.method,
+          definitionFile: endpoint.filePath,
+          definitionLine: endpoint.line,
+        });
+        continue;
+      }
 
-      if (methodMatched.length > 0) {
-        for (const { call, index } of methodMatched) {
-          accountedForCallIndices.add(index);
+      // Every call whose route matches this endpoint is accounted for by
+      // this endpoint, regardless of whether its method matches — a call
+      // under a different method is reported as a method-mismatch
+      // discrepancy rather than falling through to "missing endpoint".
+      for (const { call, index } of routeMatchedCalls) {
+        accountedForCallIndices.add(index);
+        if (call.method === endpoint.method) {
           this.compareSchemas(endpoint, call, typeIncompatibilities, discrepancies);
-        }
-      } else if (routeMatchedCalls.length > 0) {
-        for (const { call, index } of routeMatchedCalls) {
-          accountedForCallIndices.add(index);
+        } else {
           discrepancies.push({
             category: 'method-mismatch',
             sourceFile: call.filePath,
@@ -253,13 +262,6 @@ export class FrontendBackendComparator implements IFrontendBackendComparator {
               `la ruta "${endpoint.route}" con método ${endpoint.method}.`,
           });
         }
-      } else {
-        unconsumedEndpoints.push({
-          route: endpoint.route,
-          method: endpoint.method,
-          definitionFile: endpoint.filePath,
-          definitionLine: endpoint.line,
-        });
       }
     }
 

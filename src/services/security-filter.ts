@@ -104,8 +104,14 @@ function normalizePath(filePath: string): string {
 /** AWS-style access key IDs, e.g. AKIAIOSFODNN7EXAMPLE. */
 const AWS_KEY_REGEX = /\bAKIA[0-9A-Z]{16}\b/g;
 
-/** JWT-like tokens: three base64url segments separated by dots. */
-const JWT_REGEX = /\beyJ[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}\b/g;
+/**
+ * JWT-like tokens: three base64url segments separated by dots. Uses a
+ * negative lookahead/lookbehind instead of `\b` for the boundaries, since
+ * `-` (explicitly part of the base64url character class) is not a `\w`
+ * character — a trailing `\b` would fail to match (and silently skip
+ * redaction) whenever a segment ends in `-`.
+ */
+const JWT_REGEX = /(?<![A-Za-z0-9_-])eyJ[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}\.[A-Za-z0-9_-]{5,}(?![A-Za-z0-9_-])/g;
 
 /** Connection strings such as postgres://user:pass@host, mongodb+srv://..., etc. */
 const CONNECTION_STRING_REGEX =
