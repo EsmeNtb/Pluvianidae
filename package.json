@@ -13,7 +13,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/extension.js",
+  "main": "./out/src/extension.js",
   "contributes": {
     "configuration": {
       "title": "Pluvianidae",
@@ -108,7 +108,11 @@
     "watch": "tsc -watch -p ./",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint src --ext ts"
+    "lint": "eslint src --ext ts",
+    "mascot:install": "npm install --prefix desktop-mascot",
+    "mascot:build": "npm run build --prefix desktop-mascot",
+    "mascot:dev": "npm run dev --prefix desktop-mascot",
+    "dev": "node scripts/dev.js"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1094.0",
@@ -120,6 +124,7 @@
     "@types/node": "^20.11.0",
     "@types/vscode": "^1.85.0",
     "fast-check": "^3.15.0",
+    "jsdom": "^29.1.1",
     "vitest": "^1.2.0"
   }
 }

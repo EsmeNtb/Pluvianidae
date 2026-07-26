@@ -115,6 +115,8 @@ import { registerSeedBasketView } from './presentation/seed-basket-view';
 import { IMascotRenderer, MascotController } from './presentation/mascot/mascot-controller';
 import { AnimationEngine } from './presentation/mascot/animation-engine';
 import { MascotWebview, wireMascotToEventBus } from './presentation/mascot/mascot-webview';
+import { DesktopMascotManager } from './services/desktop-mascot-manager';
+import { wireDesktopMascotToEventBus } from './services/wire-desktop-mascot-to-event-bus';
 
 let outputChannel: vscode.OutputChannel | undefined;
 
@@ -261,10 +263,33 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
   );
 
-  // Mascota ↔ Event Bus wiring (requirements.md 9.6, 10.2, 10.5).
+  // Mascota (webview) ↔ Event Bus wiring (requirements.md 9.6, 10.2, 10.5).
+  // Kept wired even though `mascot-webview.ts` is no longer shown as the
+  // primary mascot (see desktop-mascot design.md > "Decisión sobre
+  // mascot-webview.ts" and requirements.md 11.2/11.3): this feature must
+  // not delete `mascot-webview.ts`, `mascot-controller.ts`,
+  // `animation-engine.ts` or their existing wiring, only retire the
+  // `mascotController.show()` call that made the webview the *visible*
+  // mascot. `wireMascotToEventBus` remains valid, just currently unused
+  // for anything user-visible.
   context.subscriptions.push(wireMascotToEventBus(eventBus, mascotController, seedEngine));
+
+  // Desktop Mascot (Electron) ↔ Event Bus wiring (desktop-mascot
+  // requirements.md 8.2, 8.4, 11.2, 11.3). Replaces the old
+  // `mascotController.show()` as the *primary* visible mascot. Per
+  // requirement 8.4, `pluvianidae.enableMascot === false` SHALL NOT
+  // construct nor start any App_Electron process at all — not even the
+  // manager itself is constructed in that case.
+  let desktopMascotManager: DesktopMascotManager | undefined;
   if (config.enableMascot) {
-    mascotController.show();
+    desktopMascotManager = new DesktopMascotManager({ preferredPort: 0 });
+    context.subscriptions.push({ dispose: () => void desktopMascotManager?.dispose() });
+    context.subscriptions.push(wireDesktopMascotToEventBus(eventBus, desktopMascotManager));
+    // Fire-and-forget: DesktopMascotManager.start() is fail-safe by design
+    // (never throws/rejects towards its caller — any failure to spawn
+    // Electron transitions it to the `unavailable` state and is logged
+    // internally instead), so activate() must not await it.
+    void desktopMascotManager.start();
   }
 
   // analysis:finding → seed creation → seed:created (see this file's top

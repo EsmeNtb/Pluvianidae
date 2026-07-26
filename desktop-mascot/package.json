@@ -1,0 +1,21 @@
+{
+  "name": "pluvianidae-desktop-mascot",
+  "displayName": "Pluvianidae Desktop Mascot",
+  "description": "Aplicacion de escritorio Electron independiente para la mascota de Pluvianidae",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/desktop-mascot/src/main.js",
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -p . --watch --preserveWatchOutput",
+    "start": "electron .",
+    "dev": "node scripts/dev.js"
+  },
+  "devDependencies": {
+    "electron": "31.7.7",
+    "typescript": "5.3.3"
+  },
+  "dependencies": {
+    "pluvianidae": "file:.."
+  }
+}
