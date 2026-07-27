@@ -331,6 +331,8 @@ function createMascotWindow(): BrowserWindow {
  */
 const gotTheLock = app.requestSingleInstanceLock();
 
+console.log("gotTheLock:", gotTheLock);
+
 if (decideSingleInstanceOutcome(gotTheLock) === 'quit') {
   // Proceso perdedor: termina de inmediato, sin crear ninguna BrowserWindow.
   app.quit();
