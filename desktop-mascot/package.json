@@ -6,16 +6,18 @@
   "private": true,
   "main": "dist/desktop-mascot/src/main.js",
   "scripts": {
-    "build": "tsc -p .",
+    "build:ts": "tsc -p .",
+    "build:preload": "esbuild src/preload.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/desktop-mascot/src/preload.js",
+    "build:renderer": "esbuild src/renderer.ts --bundle --platform=browser --format=iife --outfile=dist/desktop-mascot/src/renderer.js",
+    "build": "npm run build:ts && npm run build:preload && npm run build:renderer",
     "watch": "tsc -p . --watch --preserveWatchOutput",
     "start": "electron .",
     "dev": "node scripts/dev.js"
   },
   "devDependencies": {
     "electron": "31.7.7",
+    "esbuild": "^0.25.12",
     "typescript": "5.3.3"
   },
-  "dependencies": {
-    "pluvianidae": "file:.."
-  }
+  "dependencies": {}
 }

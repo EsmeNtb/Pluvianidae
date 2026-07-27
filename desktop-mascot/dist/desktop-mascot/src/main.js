@@ -308,6 +308,7 @@ function createMascotWindow() {
  * procesos y simplemente coexistirían, tal como pide el diseño.
  */
 const gotTheLock = electron_1.app.requestSingleInstanceLock();
+console.log("gotTheLock:", gotTheLock);
 if ((0, single_instance_1.decideSingleInstanceOutcome)(gotTheLock) === 'quit') {
     // Proceso perdedor: termina de inmediato, sin crear ninguna BrowserWindow.
     electron_1.app.quit();
