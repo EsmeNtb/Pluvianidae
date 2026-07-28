@@ -606,9 +606,44 @@ function resolveMainScriptPath(desktopMascotDir: string): string {
  * an injected `spawnElectronProcess` test double is never affected by
  * whether Electron happens to be installed.
  */
-function defaultSpawnElectronProcess(desktopMascotDir: string, args: string[]): ChildProcess {
-  const electronBinaryPath = resolveElectronBinaryPath(desktopMascotDir);
-  return spawn(electronBinaryPath, args, { stdio: 'ignore' });
+function defaultSpawnElectronProcess(
+  desktopMascotDir: string,
+  args: string[]
+): ChildProcess {
+  const electronBinaryPath =
+    resolveElectronBinaryPath(desktopMascotDir);
+
+  const cleanEnvironment = { ...process.env };
+
+  delete cleanEnvironment.ELECTRON_RUN_AS_NODE;
+  delete cleanEnvironment.NODE_OPTIONS;
+
+  const child = spawn(electronBinaryPath, args, {
+    cwd: desktopMascotDir,
+    env: cleanEnvironment,
+    stdio: ['ignore', 'pipe', 'pipe'],
+    windowsHide: true,
+  });
+
+  child.stdout?.on('data', (data: Buffer) => {
+    console.log(
+      `[Pluvianidae Mascot] ${data.toString().trim()}`
+    );
+  });
+
+  child.stderr?.on('data', (data: Buffer) => {
+    console.error(
+      `[Pluvianidae Mascot] ${data.toString().trim()}`
+    );
+  });
+
+  child.on('exit', (code, signal) => {
+    console.log(
+      `[Pluvianidae Mascot] Electron terminó. Código: ${code}, señal: ${signal}`
+    );
+  });
+
+  return child;
 }
 
 /**
