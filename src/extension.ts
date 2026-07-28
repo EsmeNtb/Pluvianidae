@@ -124,7 +124,11 @@ let outputChannel: vscode.OutputChannel | undefined;
 const INDEXING_COMPLETE_MESSAGE_DURATION_MS = 4000;
 
 export function activate(context: vscode.ExtensionContext): void {
-  const workspaceRoot = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  console.log('[Pluvianidae] activate() ejecutado');
+  vscode.window.showInformationMessage('Pluvianidae se activó 🐦');
+
+  const workspaceRoot =
+    vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 
   outputChannel = vscode.window.createOutputChannel('Pluvianidae');
   context.subscriptions.push(outputChannel);
@@ -817,3 +821,4 @@ function getSelectedWordFromActiveEditor(): string | undefined {
 function describeError(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
 }
+

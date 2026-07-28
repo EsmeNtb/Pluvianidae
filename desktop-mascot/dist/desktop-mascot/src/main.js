@@ -46,6 +46,7 @@ const path = __importStar(require("path"));
 const mascot_actions_1 = require("../../shared/mascot-actions");
 const context_menu_1 = require("./context-menu");
 const ipc_channels_1 = require("./ipc-channels");
+const sse_client_1 = require("./sse-client");
 const single_instance_1 = require("./single-instance");
 const window_state_1 = require("./window-state");
 /**
@@ -325,12 +326,34 @@ else {
             mascotWindow.focus();
         }
     });
+    let sseHandle;
     electron_1.app.whenReady().then(() => {
-        createMascotWindow();
+        const win = createMascotWindow();
         registerMascotActionChannel();
-        // TODO(tarea 7): iniciar sse-client.ts para conectarse al servidor local
-        // (reutilizando `extensionServerPort`) y reenviar los MascotEvent
-        // recibidos al renderer vía preload/contextBridge.
+        // Conectar el cliente SSE al servidor local de la extensión y reenviar
+        // cada MascotEvent recibido al renderer vía IPC (preload lo valida con
+        // isMascotEvent antes de entregarlo a renderer.ts).
+        if (extensionServerPort !== undefined) {
+            sseHandle = (0, sse_client_1.maintainConnection)({
+                port: extensionServerPort,
+                onMascotEvent: (event) => {
+                    if (win && !win.isDestroyed()) {
+                        win.webContents.send(ipc_channels_1.MASCOT_EVENT_CHANNEL, event);
+                    }
+                },
+                onHeartbeatTimeout: () => {
+                    console.error('[Pluvianidae Mascot] Heartbeat SSE vencido: la extensión no responde. Cerrando mascota.');
+                    electron_1.app.quit();
+                },
+            });
+        }
+        else {
+            console.warn('[Pluvianidae Mascot] Sin --port= en argv: el cliente SSE no se iniciará. ' +
+                'La mascota no recibirá eventos de la extensión.');
+        }
+    });
+    electron_1.app.on('before-quit', () => {
+        sseHandle?.stop();
     });
 }
 // Aplicación de una sola ventana, sin necesidad de reabrir en macOS al usar
