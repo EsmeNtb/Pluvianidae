@@ -6,12 +6,17 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div id="mascot-root">
-    <img
+  <div id="mascot-root" class="mascot-state-idle">
+    <div id="seed-layer" aria-hidden="true"></div>
+
+    <div
       id="mascot-character"
-      src="./assets/pluvianidae.png"
-      alt="Pluvianidae mascot"
-    />
+      role="img"
+      aria-label="Pluvianidae"
+    >
+      🐦
+    </div>
+
     <div id="mascot-bubble"></div>
   </div>
 

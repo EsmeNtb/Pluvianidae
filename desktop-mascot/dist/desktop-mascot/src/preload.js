@@ -1,102 +1,55 @@
 "use strict";
-
-// src/preload.ts
-var import_electron = require("electron");
-
-// ../shared/mascot-events.ts
-var MASCOT_EVENT_TYPES = [
-  "idle",
-  "indexing",
-  "success",
-  "warning",
-  "error",
-  "seed",
-  "hide",
-  "show"
-];
-var MASCOT_EVENT_MAX_TEXT_LENGTH = 2e3;
-function isMascotEvent(value) {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const record = value;
-  if (typeof record.type !== "string" || !MASCOT_EVENT_TYPES.includes(record.type)) {
-    return false;
-  }
-  switch (record.type) {
-    case "idle":
-    case "hide":
-    case "show":
-      return Object.keys(record).length === 1;
-    case "indexing": {
-      const allowedKeys = /* @__PURE__ */ new Set(["type", "file", "progress"]);
-      if (!Object.keys(record).every((key) => allowedKeys.has(key))) {
-        return false;
-      }
-      if (record.file !== void 0 && !isValidText(record.file)) {
-        return false;
-      }
-      if (record.progress !== void 0 && !isValidProgress(record.progress)) {
-        return false;
-      }
-      return true;
-    }
-    case "success":
-    case "warning":
-    case "error":
-      return Object.keys(record).length === 2 && isValidText(record.message);
-    case "seed":
-      return Object.keys(record).length === 2 && isValidSeedAmount(record.amount);
-    default:
-      return false;
-  }
-}
-function isValidText(value) {
-  return typeof value === "string" && value.length > 0 && value.length <= MASCOT_EVENT_MAX_TEXT_LENGTH;
-}
-function isValidProgress(value) {
-  return typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 100;
-}
-function isValidSeedAmount(value) {
-  return typeof value === "number" && Number.isInteger(value) && value > 0 && value <= 1e3;
-}
-
-// ../shared/mascot-actions.ts
-var MASCOT_ACTION_TYPES = [
-  "analyze-repository",
-  "precommit-review",
-  "show-seed-basket",
-  "mute-messages",
-  "hide-mascot",
-  "close-mascot"
-];
-function isMascotAction(value) {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const record = value;
-  return typeof record.action === "string" && MASCOT_ACTION_TYPES.includes(record.action) && Object.keys(record).length === 1;
-}
-
-// src/ipc-channels.ts
-var MASCOT_EVENT_CHANNEL = "pluvianidae:mascot-event";
-var MASCOT_ACTION_CHANNEL = "pluvianidae:mascot-action";
-
-// src/preload.ts
-var pluvianidaeMascotApi = {
-  onMascotEvent(callback) {
-    import_electron.ipcRenderer.on(MASCOT_EVENT_CHANNEL, (_ipcEvent, data) => {
-      if (!isMascotEvent(data)) {
-        return;
-      }
-      callback(data);
-    });
-  },
-  sendAction(action) {
-    if (!isMascotAction(action)) {
-      return;
-    }
-    import_electron.ipcRenderer.send(MASCOT_ACTION_CHANNEL, action);
-  }
+/**
+ * Script de preload de Electron: único puente entre el proceso `main` y el
+ * `renderer`, expuesto vía `contextBridge`.
+ *
+ * Implementa la API `PluvianidaeMascotApi` (ver `ipc-channels.ts` y
+ * design.md > "Componente 4: App Electron"): la ÚNICA superficie de
+ * Node/Electron visible desde el renderer. No se expone `require`,
+ * `process`, `ipcRenderer` directo, ni ninguna otra API de Node —
+ * únicamente el objeto `{ onMascotEvent, sendAction }` (Requirement 9.1).
+ *
+ * Ambas direcciones se validan antes de cruzar el puente:
+ * - `onMascotEvent`: todo dato recibido por `ipcRenderer.on(...)` se
+ *   valida con `isMascotEvent` antes de invocar `callback`; si no es
+ *   válido, se descarta silenciosamente (Requirement 9.2, 3.5).
+ * - `sendAction`: toda acción se valida con `isMascotAction` ANTES de
+ *   reenviarla vía `ipcRenderer.send(...)`; si no es válida, no se envía
+ *   nada. Esto es defensa en profundidad — en la práctica el renderer
+ *   sólo debería construir acciones válidas desde el menú contextual
+ *   (`context-menu.ts`, tarea 11), pero el preload nunca confía en eso.
+ *
+ * Pendiente en tareas posteriores del plan de implementación:
+ * - Tarea 8.2: `main.ts` validará también cada mensaje IPC recibido
+ *   (`ipcMain.on(MASCOT_ACTION_CHANNEL, ...)`) antes de actuar sobre él.
+ * - Tarea 9: `renderer.ts` consumirá `window.pluvianidae` para pintar
+ *   animaciones/burbujas y disparar `sendAction` desde el menú contextual.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+const electron_1 = require("electron");
+const mascot_events_1 = require("../../shared/mascot-events");
+const mascot_actions_1 = require("../../shared/mascot-actions");
+const ipc_channels_1 = require("./ipc-channels");
+const pluvianidaeMascotApi = {
+    onMascotEvent(callback) {
+        electron_1.ipcRenderer.on(ipc_channels_1.MASCOT_EVENT_CHANNEL, (_ipcEvent, data) => {
+            if (!(0, mascot_events_1.isMascotEvent)(data)) {
+                // Mensaje inválido: se descarta silenciosamente, sin propagarlo
+                // nunca al renderer (Requirement 3.5, 9.2).
+                return;
+            }
+            callback(data);
+        });
+    },
+    sendAction(action) {
+        if (!(0, mascot_actions_1.isMascotAction)(action)) {
+            // Defensa en profundidad: el renderer sólo debería construir
+            // acciones válidas desde el menú contextual, pero nunca se confía
+            // ciegamente en eso antes de cruzar el proceso boundary.
+            return;
+        }
+        electron_1.ipcRenderer.send(ipc_channels_1.MASCOT_ACTION_CHANNEL, action);
+    },
 };
-import_electron.contextBridge.exposeInMainWorld("pluvianidae", pluvianidaeMascotApi);
+electron_1.contextBridge.exposeInMainWorld('pluvianidae', pluvianidaeMascotApi);
+//# sourceMappingURL=preload.js.map

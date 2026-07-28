@@ -121,6 +121,47 @@ export function applyVisualState(root: HTMLElement, state: MascotVisualState): v
   root.classList.add(MASCOT_STATE_CLASS_PREFIX + state);
 }
 
+const emojiByState: Record<MascotVisualState, string> = {
+  idle: '🐦',
+  thinking: '🐤',
+  working: '🐦‍⬛',
+  success: '🐥',
+  warning: '🐦',
+  error: '🐧',
+  sleeping: '💤',
+};
+
+function applyMascotEmoji(
+  character: HTMLElement,
+  state: MascotVisualState
+): void {
+  character.textContent = emojiByState[state];
+  character.setAttribute(
+    'aria-label',
+    `Pluvianidae en estado ${state}`
+  );
+}
+
+function spawnSeeds(seedLayer: HTMLElement, amount = 8): void {
+  const safeAmount = Math.min(Math.max(amount, 1), 20);
+
+  for (let index = 0; index < safeAmount; index += 1) {
+    const seed = document.createElement('span');
+
+    seed.className = 'seed';
+    seed.textContent = '🌾';
+    seed.style.left = `${10 + Math.random() * 80}%`;
+    seed.style.animationDelay = `${Math.random() * 0.5}s`;
+    seed.style.animationDuration = `${1.4 + Math.random() * 0.8}s`;
+
+    seed.addEventListener('animationend', () => {
+      seed.remove();
+    });
+
+    seedLayer.appendChild(seed);
+  }
+}
+
 /**
  * Tiempo (ms) que la burbuja permanece visible antes de auto-ocultarse
  * (Requirement 6.4). Valor sugerido por design.md > "Burbujas" (4000ms).
@@ -250,16 +291,38 @@ function initMascotRenderer(): void {
     return;
   }
 
+  const character = document.getElementById('mascot-character');
+  const seedLayer = document.getElementById('seed-layer');
+
+  if (!character) {
+    return;
+  }
+
+  applyVisualState(root, 'idle');
+  applyMascotEmoji(character, 'idle');
+
   const bubble = document.getElementById('mascot-bubble');
 
   window.pluvianidae.onMascotEvent((event: MascotEvent) => {
     const visualState = mapEventToVisualState(event);
+
     applyVisualState(root, visualState);
+    applyMascotEmoji(character, visualState);
+
+    if (event.type === 'seed' && seedLayer) {
+      spawnSeeds(seedLayer, event.amount);
+    }
+
+    if (event.type === 'success' && seedLayer) {
+      spawnSeeds(seedLayer, 8);
+    }
 
     if (!bubble) {
       return;
     }
+
     const bubbleText = extractBubbleText(event);
+
     if (bubbleText !== undefined) {
       showBubble(bubble, bubbleText, BUBBLE_AUTO_HIDE_MS);
     }
