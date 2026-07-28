@@ -221,7 +221,23 @@ export function extractBubbleText(event: MascotEvent): string | undefined {
  * debounce, ver doc comment de `showBubble`).
  */
 let bubbleHideTimer: ReturnType<typeof setTimeout> | undefined;
+let returnToIdleTimer: ReturnType<typeof setTimeout> | undefined;
 
+function scheduleReturnToIdle(
+  root: HTMLElement,
+  character: HTMLElement,
+  delayMs = 1800
+): void {
+  if (returnToIdleTimer !== undefined) {
+    clearTimeout(returnToIdleTimer);
+  }
+
+  returnToIdleTimer = setTimeout(() => {
+    returnToIdleTimer = undefined;
+    applyVisualState(root, 'idle');
+    applyMascotEmoji(character, 'idle');
+  }, delayMs);
+}
 /**
  * Escribe `text` en `bubbleElement` y lo hace visible, con auto-ocultado
  * tras `autoHideMs`.
@@ -306,17 +322,37 @@ function initMascotRenderer(): void {
   window.pluvianidae.onMascotEvent((event: MascotEvent) => {
     const visualState = mapEventToVisualState(event);
 
+    // Un evento nuevo invalida cualquier regreso pendiente a idle.
+    // Así, por ejemplo, un análisis largo permanece en working hasta que
+    // llegue realmente success, warning o error.
+    if (returnToIdleTimer !== undefined) {
+      clearTimeout(returnToIdleTimer);
+      returnToIdleTimer = undefined;
+    }
+
     applyVisualState(root, visualState);
     applyMascotEmoji(character, visualState);
 
-    if (event.type === 'seed' && seedLayer) {
-      spawnSeeds(seedLayer, event.amount);
+    if (event.type === 'seed') {
+      if (seedLayer) {
+        spawnSeeds(seedLayer, event.amount);
+      }
+      scheduleReturnToIdle(root, character);
     }
 
-    if (event.type === 'success' && seedLayer) {
-      spawnSeeds(seedLayer, 8);
+    if (event.type === 'success') {
+      if (seedLayer) {
+        spawnSeeds(seedLayer, 8);
+      }
+      scheduleReturnToIdle(root, character);
     }
 
+    if (event.type === 'warning' || event.type === 'error') {
+      scheduleReturnToIdle(root, character);
+    }
+
+    // idle, indexing/working, show y hide no reciben timeout:
+    // conservan su estado hasta que llegue el siguiente evento real.
     if (!bubble) {
       return;
     }
