@@ -67,7 +67,8 @@
       "explorer": [
         {
           "id": "pluvianidae.seedBasket",
-          "name": "Pluvianidae: Cesto de semillas"
+          "name": "Pluvianidae: Cesto de semillas",
+          "icon": "$(seedling)"
         }
       ]
     },
@@ -100,7 +101,32 @@
         "command": "pluvianidae.explainRepository",
         "title": "Pluvianidae: Explicar repositorio"
       }
-    ]
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "pluvianidae.search"
+        },
+        {
+          "command": "pluvianidae.analyzeReferences"
+        },
+        {
+          "command": "pluvianidae.detectDeadCode"
+        },
+        {
+          "command": "pluvianidae.compareFrontendBackend"
+        },
+        {
+          "command": "pluvianidae.preCommitReview"
+        },
+        {
+          "command": "pluvianidae.generateReadme"
+        },
+        {
+          "command": "pluvianidae.explainRepository"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

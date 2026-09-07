@@ -21,7 +21,8 @@ import * as http from 'http';
 import * as path from 'path';
 import { isMascotAction, MascotAction } from '../../shared/mascot-actions';
 import { buildMascotContextMenu } from './context-menu';
-import { MASCOT_ACTION_CHANNEL } from './ipc-channels';
+import { MASCOT_ACTION_CHANNEL, MASCOT_EVENT_CHANNEL } from './ipc-channels';
+import { maintainConnection, MaintainConnectionHandle } from './sse-client';
 import { decideSingleInstanceOutcome } from './single-instance';
 import {
   WINDOW_WIDTH,
@@ -349,13 +350,40 @@ if (decideSingleInstanceOutcome(gotTheLock) === 'quit') {
     }
   });
 
+  let sseHandle: MaintainConnectionHandle | undefined;
+
   app.whenReady().then(() => {
-    createMascotWindow();
+    const win = createMascotWindow();
     registerMascotActionChannel();
 
-    // TODO(tarea 7): iniciar sse-client.ts para conectarse al servidor local
-    // (reutilizando `extensionServerPort`) y reenviar los MascotEvent
-    // recibidos al renderer vía preload/contextBridge.
+    // Conectar el cliente SSE al servidor local de la extensión y reenviar
+    // cada MascotEvent recibido al renderer vía IPC (preload lo valida con
+    // isMascotEvent antes de entregarlo a renderer.ts).
+    if (extensionServerPort !== undefined) {
+      sseHandle = maintainConnection({
+        port: extensionServerPort,
+        onMascotEvent: (event) => {
+          if (win && !win.isDestroyed()) {
+            win.webContents.send(MASCOT_EVENT_CHANNEL, event);
+          }
+        },
+        onHeartbeatTimeout: () => {
+          console.error(
+            '[Pluvianidae Mascot] Heartbeat SSE vencido: la extensión no responde. Cerrando mascota.'
+          );
+          app.quit();
+        },
+      });
+    } else {
+      console.warn(
+        '[Pluvianidae Mascot] Sin --port= en argv: el cliente SSE no se iniciará. ' +
+          'La mascota no recibirá eventos de la extensión.'
+      );
+    }
+  });
+
+  app.on('before-quit', () => {
+    sseHandle?.stop();
   });
 }
 
